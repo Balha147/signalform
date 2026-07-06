@@ -1,0 +1,134 @@
+<div class="max-w-7xl mx-auto space-y-6">
+
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between border-b border-slate-200 pb-4">
+        <div>
+            <h2 class="text-2xl font-bold tracking-tight text-slate-900">Create a New Quote</h2>
+            <p class="text-sm text-slate-500">Fill in the information and add your services in real time.</p>
+        </div>
+    </div>
+
+    <form autocomplete="off" class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+
+        <div class="lg:col-span-2 space-y-6">
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <h3 class="text-base font-bold text-slate-900">Basic Information</h3>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+
+                        <label class="text-sm font-semibold text-slate-700">
+                            Client Name
+                        </label>
+
+                        <select [formField]="invoiceForm.clientId" class="w-full px-4 py-2.5 rounded-xl border bg-slate-50 text-sm text-slate-900 focus:outline-none transition-all
+           focus:border-slate-400" [ngClass]="{
+      'border-rose-500 bg-rose-50/30':
+        invoiceForm.clientId().errors()?.length && invoiceForm.clientId().touched(),
+
+      'border-emerald-500 bg-emerald-50/20':
+        !invoiceForm.clientId().errors()?.length && invoiceForm.clientId().value()
+    }">
+
+                            <option value="">
+                                Select a client
+                            </option>
+
+                            @for (client of clients(); track client.id) {
+                            <option [value]="client.id">
+                                {{ client.companyName }} - {{ client.contactName }}
+                            </option>
+                            }
+
+                        </select>
+
+                        <app-field-feedback [errors]="invoiceForm.clientId().errors()"
+                            [touched]="invoiceForm.clientId().touched()" [value]="invoiceForm.clientId().value" />
+
+                    </div>
+                    <div class="space-y-1.5">
+                        <app-invoice-number-input [formField]="invoiceForm.invoiceNumber" label="Quote Number"
+                            placeholder="Ex: DEV-2026-001" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-base font-bold text-slate-900">Services</h3>
+                    <button type="button" (click)="addItem()"
+                        class="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold rounded-xl border border-blue-200 bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors">
+                        + Add Item
+                    </button>
+                </div>
+
+                <div
+                    class="hidden md:grid grid-cols-12 gap-3 px-2 pb-2 text-xs font-semibold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+                    <div class="col-span-6">Description</div>
+                    <div class="col-span-2">Quantity</div>
+                    <div class="col-span-3">Unit Price (HT)</div>
+                    <div class="col-span-1 text-center">Action</div>
+                </div>
+                <div class="space-y-3">
+                    @for (item of invoiceForm.items; track item; let i = $index) {
+                    <div
+                        class="grid grid-cols-1 md:grid-cols-12 gap-3 items-start p-3 md:p-2 border md:border-none border-slate-100 rounded-xl bg-slate-50/50 md:bg-transparent">
+
+                        <div class="col-span-1 md:col-span-6 space-y-1">
+                            <label class="text-xs font-medium text-slate-400 md:hidden">Description</label>
+                            <input type="text" [formField]="item.description"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-slate-400"
+                                [ngClass]="{
+                        'border-rose-500': item.description().errors()?.length && item.description().touched()
+                    }" placeholder="Ex: Développement Frontend Angular" />
+                            <app-field-feedback [errors]="item.description().errors()"
+                                [touched]="item.description().touched()" [value]="item.description().value" />
+                        </div>
+
+                        <div class="col-span-1 md:col-span-2 space-y-1">
+                            <label class="text-xs font-medium text-slate-400 md:hidden">Quantity</label>
+                            <input type="number" [formField]="item.quantity"
+                                class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-slate-400 text-right md:text-left"
+                                [ngClass]="{
+                        'border-rose-500': item.quantity().errors()?.length && item.quantity().touched()
+                    }" placeholder="0" />
+                            <app-field-feedback [errors]="item.quantity().errors()"
+                                [touched]="item.quantity().touched()" [value]="item.quantity().value" />
+                        </div>
+
+                        <div class="col-span-1 md:col-span-3 space-y-1">
+                            <label class="text-xs font-medium text-slate-400 md:hidden">Unit Price</label>
+                            <div class="relative">
+                                <input type="number" [formField]="item.price"
+                                    class="w-full pl-3 pr-8 py-2 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-slate-400 text-right md:text-left"
+                                    [ngClass]="{
+                            'border-rose-500': item.price().errors()?.length && item.price().touched()
+                        }" placeholder="0.00" step="0.01" />
+                                <span class="absolute right-3 top-2.5 text-xs font-semibold text-slate-400">€</span>
+                            </div>
+                            <app-field-feedback [errors]="item.price().errors()" [touched]="item.price().touched()"
+                                [value]="item.price().value" />
+                        </div>
+
+                        <div class="col-span-1 md:col-span-1 flex justify-end md:justify-center pt-2 md:pt-1.5">
+                            <button type="button" (click)="removeItem(i)" [disabled]="!canRemoveItem()"
+                                title="Supprimer la ligne"
+                                class="p-2 text-slate-400 hover:text-rose-600 disabled:opacity-30 disabled:hover:text-slate-400 rounded-lg hover:bg-rose-50 transition-colors">
+                                <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                                    <path
+                                        d="M3 6v18h18v-18h-18zm5 14c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm5 0c0 .552-.448 1-1 1s-1-.448-1-1v-10c0-.552.448-1 1-1s1 .448 1 1v10zm4-18v2h-20v-2h5.711c.9 0 1.761-.53 2.133-1.366l.542-1.201c.218-.482.704-.833 1.233-.833h4.762c.53 0 1.016.351 1.233.833l.542 1.201c.372.836 1.233 1.366 2.133 1.366h5.711z" />
+                                </svg>
+                            </button>
+                        </div>
+
+                    </div>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+        <app-invoice-total [items]="invoiceModel().items" [invoiceNumber]="invoiceModel().invoiceNumber"
+            [customer]="selectedClientSnapshot()" />
+    </form>
+</div>

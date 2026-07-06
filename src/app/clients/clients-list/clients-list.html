@@ -1,0 +1,160 @@
+<div class="space-y-6">
+
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-slate-200/60 pb-5">
+        <div>
+            <h2 class="text-2xl font-black tracking-tight text-slate-900">Client Portfolio</h2>
+            <p class="text-sm text-slate-500 mt-1">Manage your accounts, track their compliance, and create quotes.</p>
+        </div>
+    </div>
+
+    <div class="max-w-xs">
+        <div
+            class="group bg-white p-6 rounded-2xl border border-slate-200/60 shadow-sm hover:shadow-md hover:border-slate-300 flex items-center justify-between transition-all duration-300">
+            <div class="space-y-1.5">
+                <p
+                    class="text-[11px] font-bold uppercase tracking-widest text-slate-400 group-hover:text-slate-500 transition-colors">
+                    Total Accounts
+                </p>
+                <p class="text-3xl font-black tracking-tight text-slate-900 font-sans">
+                    {{ clients()?.length ?? 0 }}
+                </p>
+            </div>
+            <div
+                class="w-12 h-12 bg-slate-50 group-hover:bg-blue-50 text-slate-500 group-hover:text-blue-600 rounded-xl flex items-center justify-center transition-colors duration-300">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" class="w-5 h-5">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="mb-4">
+        <app-search [(filterCriteria)]="filterCriteria" />
+    </div>
+
+
+    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse">
+                <thead>
+                    <tr
+                        class="bg-slate-50/70 border-b border-slate-200/80 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                        <th class="px-6 py-4.5">Company / Contact</th>
+                        <th class="px-6 py-4.5">Contact Details</th>
+                        <th class="px-6 py-4.5">Legal ID</th>
+                        <th class="px-6 py-4.5">Preferred Channel</th>
+                        <th class="px-6 py-4.5 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="text-sm divide-y divide-slate-100 text-slate-700 font-medium">
+
+                    @for (client of filteredClients(); track client.id) {
+                    <tr class="hover:bg-slate-50/40 transition-colors group">
+                        <td class="px-6 py-4.5">
+                            <div class="font-bold text-slate-900 text-base group-hover:text-blue-600 transition-colors">
+                                {{ client.companyName }}</div>
+                            <div class="text-xs text-slate-400 font-normal mt-0.5">Contact : <span
+                                    class="font-medium text-slate-600">{{ client.contactName }}</span></div>
+                        </td>
+
+                        <td class="px-6 py-4.5 space-y-0.5">
+                            <div class="text-slate-800 text-xs font-semibold">{{ client.email || '—' }}</div>
+                            <div class="text-[11px] text-slate-400 font-mono tracking-tight">{{ client.phone || '—' }}
+                            </div>
+                        </td>
+
+                        <td class="px-6 py-4.5">
+                            <span
+                                class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg text-xs font-mono font-semibold tracking-wide border border-slate-200/40">
+                                {{ client.siret }}
+                            </span>
+                        </td>
+
+                        <td class="px-6 py-4.5">
+                            @switch (client.preferredContact) {
+                            @case ('both') {
+                            <span
+                                class="inline-flex items-center gap-1.5 text-xs font-semibold text-indigo-700 bg-indigo-50 px-2.5 py-1 rounded-full">
+                                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span> Hybride
+                            </span>
+                            }
+                            @case ('email') {
+                            <span
+                                class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-full">
+                                <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span> Email
+                            </span>
+                            }
+                            @case ('phone') {
+                            <span
+                                class="inline-flex items-center gap-1.5 text-xs font-semibold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-full">
+                                <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span> Téléphone
+                            </span>
+                            }
+                            }
+                        </td>
+
+
+                        <td class="px-6 py-4.5 text-right">
+                            <div
+                                class="flex items-center justify-end gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
+                                <button (click)="requestDeleteClient(client)"
+                                    class="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-xl transition-colors"
+                                    title="Supprimer le compte">
+                                    <span role="img" aria-label="Supprimer">🗑️</span>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    } @empty {
+                    <tr>
+                        <td colspan="6" class="px-6 py-16 text-center">
+                            <div class="text-4xl mb-4 grayscale opacity-60">📂</div>
+                            <p class="font-extrabold text-slate-800 text-base">No client found.</p>
+                            <p class="text-xs text-slate-400 mt-1 max-w-xs mx-auto">Start by adding your first
+                                client via the form.</p>
+                        </td>
+                    </tr>
+                    }
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+@if (clientToDelete(); as client) {
+<div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm transition-opacity" (click)="cancelDelete()"></div>
+    <div
+        class="relative bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-5 animate-in fade-in zoom-in-95 duration-200">
+        <div class="flex items-start gap-4">
+            <div
+                class="w-11 h-11 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center shrink-0 text-lg">
+                ⚠️
+            </div>
+            <div class="space-y-1">
+                <h3 class="text-base font-bold text-slate-900">Delete this client ?</h3>
+                <p class="text-sm text-slate-500">
+                    You are about to delete <span class="font-semibold text-slate-700">{{ client.companyName
+                        }}</span>.
+                    This action is irreversible.
+                </p>
+            </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-3 pt-2">
+            <button type="button" (click)="cancelDelete()" [disabled]="isDeleting()"
+                class="px-4 py-2.5 text-sm font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100/80 rounded-xl transition-all duration-200 disabled:opacity-50">
+                Cancel
+            </button>
+            <button type="button" (click)="confirmDelete()" [disabled]="isDeleting()"
+                class="px-4 py-2.5 text-sm font-bold text-white bg-rose-600 hover:bg-rose-700 disabled:bg-rose-300 disabled:cursor-not-allowed rounded-xl shadow-sm transition-all duration-200">
+                {{ isDeleting() ? 'Deleting...' : 'Delete' }}
+            </button>
+        </div>
+    </div>
+</div>
+}

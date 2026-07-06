@@ -1,0 +1,16 @@
+<div class="space-y-1.5">
+  <label class="text-sm font-semibold text-slate-700">{{ label() }}</label>
+
+  <input type="text" appInvoiceNumber [value]="value()" (input)="value.set($any($event.target).value)"
+    (blur)="touched.set(true)" [placeholder]="placeholder()"
+    class="w-full px-4 py-2.5 rounded-xl border bg-slate-50 text-slate-900 text-sm focus:outline-none transition-all"
+    [ngClass]="{
+    'border-rose-500 bg-rose-50/30 focus:border-rose-500 focus:ring-2 focus:ring-rose-500/10':
+      errors().length && touched(),
+
+    'border-emerald-500 bg-emerald-50/20 focus:border-emerald-500':
+      !errors().length && value() && touched()
+  }" />
+
+  <app-field-feedback [errors]="errors()" [touched]="touched()" [value]="value" />
+</div>
